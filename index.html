@@ -788,6 +788,23 @@
     @media (max-width: 420px) {
       .services-grid { grid-template-columns: 1fr; }
     }
+
+    /* Google Form Responsive Embed */
+.google-form-wrapper iframe {
+  width: 100%;
+  min-height: 850px;
+  border: none;
+  border-radius: 12px;
+  background: #0d1526;
+}
+
+/* Mobile Optimization */
+@media (max-width: 600px) {
+  .google-form-wrapper iframe {
+    min-height: 950px;
+  }
+}
+
   </style>
 </head>
 <body>
