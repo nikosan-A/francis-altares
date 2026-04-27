@@ -1290,22 +1290,6 @@
     // First visible elements
     document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('visible'));
 
-    // ── Form Submit ──
-    function handleSubmit(btn) {
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
-      setTimeout(() => {
-        btn.textContent = '✅ Message Sent!';
-        btn.style.background = '#28c840';
-        setTimeout(() => {
-          btn.textContent = 'Send Message →';
-          btn.style.background = '';
-          btn.disabled = false;
-          btn.closest('.contact-form').querySelectorAll('input, textarea').forEach(f => f.value = '');
-        }, 2500);
-      }, 1200);
-    }
-
     // ── Nav shrink on scroll ──
     window.addEventListener('scroll', () => {
       const nav = document.getElementById('navbar');
