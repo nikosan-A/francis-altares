@@ -1223,31 +1223,56 @@
             </div>
           </div>
         </div>
+
         <div class="reveal">
-          <div class="contact-form"
-            action="mailto:francis.nikko.28@gmail.com"
-            method="POST"
-            enctype="text/plain">
-            <div class="form-group">
-              <label>Your Name</label>
-              <input type="text" placeholder="e.g. Juan dela Cruz" />
-            </div>
-            <div class="form-group">
-              <label>Email Address</label>
-              <input type="email" placeholder="yourname@email.com" />
-            </div>
-            <div class="form-group">
-              <label>Subject</label>
-              <input type="text" placeholder="Project inquiry, collaboration..." />
-            </div>
-            <div class="form-group">
-              <label>Message</label>
-              <textarea rows="5" placeholder="Tell me about your project or what you have in mind..."></textarea>
-            </div>
-            <button class="form-submit" onclick="handleSubmit(this)">Send Message →</button>
-          </div>
-        </div>
-      </div>
+  <form class="contact-form" onsubmit="handleSubmit(event)">
+
+    <div class="form-group">
+      <label>Your Name</label>
+      <input
+        type="text"
+        name="name"
+        placeholder="e.g. Juan dela Cruz"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Email Address</label>
+      <input
+        type="email"
+        name="email"
+        placeholder="yourname@email.com"
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Subject</label>
+      <input
+        type="text"
+        name="subject"
+        placeholder="Project inquiry, collaboration..."
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Message</label>
+      <textarea
+        name="message"
+        rows="5"
+        placeholder="Tell me about your project or what you have in mind..."
+        required
+      ></textarea>
+    </div>
+
+    <button class="form-submit" type="submit">
+      Send Message →
+    </button>
+
+  </form>
+</div>       
     </div>
   </section>
 
@@ -1306,5 +1331,45 @@
       nav.style.padding = window.scrollY > 50 ? '0.9rem 6%' : '1.25rem 6%';
     });
   </script>
+  
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function () {
+    emailjs.init("BHfaSMy2xRajTtyGW");
+  })();
+</script>
+
+<script>
+function handleSubmit(event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const button = form.querySelector('.form-submit');
+
+  button.textContent = 'Sending...';
+  button.disabled = true;
+
+  emailjs.sendForm(
+    'service_xg079zr',
+    'template_qvqoapc',
+    form
+  ).then(() => {
+    button.textContent = '✅ Message Sent!';
+    button.style.background = '#28c840';
+    form.reset();
+
+    setTimeout(() => {
+      button.textContent = 'Send Message →';
+      button.style.background = '';
+      button.disabled = false;
+    }, 2500);
+  }).catch((error) => {
+    console.error(error);
+    alert('❌ Failed to send message. Please try again.');
+    button.textContent = 'Send Message →';
+    button.disabled = false;
+  });
+}
+</script>
 </body>
 </html>
