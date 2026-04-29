@@ -1905,7 +1905,7 @@
             <div class="contact-item-icon">📱</div>
             <div>
               <strong>Messenger</strong><br>
-              <a href="https://m.me/profile.php?id=100069336300468&rdid=0Ou6mi9NHUkWSCNy" target="_blank" rel="noopener">m.me/Rapsarap's Homemade Food Traiding</a>
+              <a href="https://m.me/100069336300468" target="_blank" rel="noopener">m.me/Rapsarap's Homemade Food Traiding</a>
             </div>
           </div>
           <div class="contact-item">
@@ -1973,7 +1973,7 @@
           <a href="https://facebook.com/YourFacebookPage" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
           </a>
-          <a href="https://m.me/YourFacebookPage" target="_blank" rel="noopener" class="social-link" aria-label="Messenger">
+          <a href="https://m.me/100069336300468" target="_blank" rel="noopener" class="social-link" aria-label="Messenger">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.908 1.452 5.51 3.727 7.21V22l3.398-1.869c.908.253 1.87.39 2.875.39C17.523 20.521 22 16.377 22 11.28 22 6.145 17.523 2 12 2zm1.186 11.855l-2.854-3.044L4.79 13.855l6.025-6.394 2.923 3.044 5.472-3.044-6.024 6.394z"/></svg>
           </a>
         </div>
@@ -2089,7 +2089,7 @@
 </div>
 
 <!-- Float Buttons -->
-<a href="https://m.me/YourFacebookPage" target="_blank" rel="noopener" class="float-btn fb-float" aria-label="Message us on Messenger" title="Message us on Messenger">
+<a href="https://m.me/100069336300468" target="_blank" rel="noopener" class="float-btn fb-float" aria-label="Message us on Messenger" title="Message us on Messenger">
   💬
 </a>
 
@@ -2189,6 +2189,7 @@
       category: "peanut-butter",
       price: 150,
       desc: "Pure roasted peanut goodness, zero added sugar. Clean, natural, and versatile.",
+      image: "images/peanut.png",
       emoji: "🫙",
       bg: "linear-gradient(135deg, #4A2E0E, #7A5018)",
       badges: [],
@@ -2201,6 +2202,7 @@
       category: "specialty",
       price: 120,
       desc: "Tangy-sweet pickled green papaya. The perfect Filipino side dish for any fried meal.",
+      image: "images/atsara.png",
       emoji: "🥗",
       bg: "linear-gradient(135deg, #2C5010, #4A8020)",
       badges: [],
@@ -2213,6 +2215,7 @@
       category: "specialty",
       price: 250,
       desc: "Authentic Bicolana laing — tender gabi leaves in rich coconut cream with chilies. Family-sized.",
+      image: "images/laing.png",
       emoji: "🥘",
       bg: "linear-gradient(135deg, #1A3A10, #305820)",
       badges: ["bulk"],
@@ -2626,11 +2629,41 @@ return card;
   // ============================================================
   // CONTACT FORM
   // ============================================================
-  function handleContactForm(e) {
-    e.preventDefault();
-    showToast('✅ Message sent! We\'ll get back to you soon.');
-    e.target.reset();
+  
+function handleContactForm(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("cName").value.trim();
+  const phone = document.getElementById("cPhone").value.trim();
+  const email = document.getElementById("cEmail").value.trim();
+  const message = document.getElementById("cMessage").value.trim();
+
+  if (!name || !phone || !message) {
+    showToast("⚠️ Please fill in required fields");
+    return;
   }
+
+  // 🔽 REPLACE THIS with your LONG Google Form URL (not forms.gle)
+  const GOOGLE_FORM_URL =
+    "https://docs.google.com/forms/d/e/1FAIpQLSdC3hl6z8G3NhOrS7bH0z9unYy681iVcNhDNTLMCAC0tsdS5A/viewform";
+
+  const params = new URLSearchParams({
+    "entry.107866711": name,          // Name
+    "entry.1209833317": phone,         // Phone
+    "entry.2063242694": email || "N/A",
+    "entry.888684683": message        // Message
+  });
+
+  const formURL = `${GOOGLE_FORM_URL}?${params.toString()}&usp=pp_url`;
+
+  // Open pre-filled Google Form
+  window.open(formURL, "_blank");
+
+  // Reset site form
+  e.target.reset();
+
+  showToast("✅ Message ready to send!");
+}
 
   // ============================================================
   // INIT
