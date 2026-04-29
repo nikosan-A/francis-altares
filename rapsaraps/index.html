@@ -16,6 +16,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
+
+    
+    /* ===== PRODUCT IMAGE SUPPORT ===== */
+    .product-img-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .product-img-inner span {
+      font-size: 4rem;
+    }
+    
+    .cart-item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
     /* ============================================================
        CSS VARIABLES & RESET
     ============================================================ */
@@ -2068,15 +2088,17 @@
   // PRODUCT DATA — Edit prices, descriptions, etc. here easily
   // ============================================================
   const PRODUCTS = [
-    {
+    
+  {
       id: 1,
       name: "Chilly Garlic Boss Level",
       category: "chilly-garlic",
       price: 180,
-      desc: "The ultimate heat experience. Not for the faint of heart — pure fire, pure flavor.",
+      desc: "The ultimate heat experience. Not for the faint of heart.",
+      image: "images/boss.png",
       emoji: "🌶️🔥",
-      bg: "linear-gradient(135deg, #6B0F0F, #9B1B1B)",
-      badges: ["bestseller", "hot"],
+      bg: "linear-gradient(135deg,#6B0F0F,#9B1B1B)",
+      badges: ["bestseller","hot"],
       heat: 100,
       bestSeller: true
     },
@@ -2085,11 +2107,12 @@
       name: "Chilly Garlic Level 3",
       category: "chilly-garlic",
       price: 160,
-      desc: "Seriously spicy with bold garlic notes. Perfect for ulam and flavor chasers.",
+      desc: "Seriously spicy with bold garlic flavor.",
+      image: "images/lvl3.png",
       emoji: "🌶️",
-      bg: "linear-gradient(135deg, #7B1515, #B02020)",
+      bg: "linear-gradient(135deg,#7B1515,#B02020)",
       badges: ["hot"],
-      heat: 78,
+      heat: 75,
       bestSeller: true
     },
     {
@@ -2097,9 +2120,10 @@
       name: "Chilly Garlic Level 2",
       category: "chilly-garlic",
       price: 145,
-      desc: "Medium-hot with a satisfying kick. Great balance of heat and garlic flavor.",
+      desc: "Medium heat with balanced garlic taste.",
+      image: "images/lvl2.png",
       emoji: "🫙",
-      bg: "linear-gradient(135deg, #8B2A0E, #C04020)",
+      bg: "linear-gradient(135deg,#8B2A0E,#C04020)",
       badges: [],
       heat: 55,
       bestSeller: false
@@ -2109,11 +2133,12 @@
       name: "Chilly Garlic Level 1",
       category: "chilly-garlic",
       price: 130,
-      desc: "Mild heat, full flavor. Great for everyday use and for spice beginners.",
+      desc: "Mild heat, perfect for everyday meals.",
+      image: "images/lvl1.png",
       emoji: "🧄",
-      bg: "linear-gradient(135deg, #6B3A10, #A05520)",
+      bg: "linear-gradient(135deg,#6B3A10,#A05520)",
       badges: [],
-      heat: 32,
+      heat: 30,
       bestSeller: false
     },
     {
@@ -2121,11 +2146,12 @@
       name: "Chilly Garlic Pabebe",
       category: "chilly-garlic",
       price: 120,
-      desc: "The gentle one! Barely-there heat with rich garlic. Safe for all ages.",
+      desc: "Barely spicy, safe for kids & beginners.",
+      image: "images/lvl.png",
       emoji: "🥰",
-      bg: "linear-gradient(135deg, #7A4020, #B06030)",
+      bg: "linear-gradient(135deg,#7A4020,#B06030)",
       badges: ["new"],
-      heat: 12,
+      heat: 10,
       bestSeller: false
     },
     {
@@ -2133,9 +2159,10 @@
       name: "Peanut Butter Sweetened",
       category: "peanut-butter",
       price: 150,
-      desc: "Creamy, rich, and perfectly sweet. Spread it, dip it, bake with it — pure bliss.",
+      desc: "Creamy, smooth, perfectly sweet peanut butter.",
+      image: "images/peanutsweet.png",
       emoji: "🥜",
-      bg: "linear-gradient(135deg, #5C3A10, #9B6520)",
+      bg: "linear-gradient(135deg,#5C3A10,#9B6520)",
       badges: ["bestseller"],
       heat: 0,
       bestSeller: true
@@ -2303,26 +2330,36 @@
       ? `<div class="heat-bar"><div class="heat-fill" style="width:${product.heat}%"></div></div>`
       : '';
 
-    card.innerHTML = `
-      <div class="product-img" style="background:${product.bg}">
-        ${badgeHTML}
-        <div class="product-img-inner">${product.emoji}</div>
-        ${heatBar}
+   card.innerHTML = `
+  <div class="product-img" style="background:${product.bg}">
+    <div class="product-img-inner">
+      ${
+        product.image
+          ? `<img src="${product.image}" alt="${product.name}">`
+          : `<span>${product.emoji}</span>`
+      }
+    </div>
+  </div>
+
+  <div class="product-info">
+    <div class="product-category">${product.category.replace('-', ' ')}</div>
+    <div class="product-name">${product.name}</div>
+    <div class="product-desc">${product.desc}</div>
+    <div class="product-footer">
+      <div class="product-price">
+        ₱${product.price}<span>/bottle</span>
       </div>
-      <div class="product-info">
-        <div class="product-category">${product.category.replace('-', ' ')}</div>
-        <div class="product-name">${product.name}</div>
-        <div class="product-desc">${product.desc}</div>
-        <div class="product-footer">
-          <div class="product-price">₱${product.price}<span>/bottle</span></div>
-          <button class="btn-add-cart" onclick="addToCart(${product.id})">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
-            Add to Cart
-          </button>
-        </div>
-      </div>
-    `;
-    return card;
+      <button class="btn-add-cart" onclick="addToCart(${product.id})">
+        <svg width="14" height="14" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
+        </svg>
+        Add to Cart
+      </button>
+    </div>
+  </div>
+`;
+return card;
   }
 
   function renderProducts() {
@@ -2447,14 +2484,14 @@
     //   4. The URL will contain entry.XXXXXXXXX=dummy_value
     //   5. Replace the entry IDs below with your real ones
     // ============================================================
-    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform";
+    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScHhsLEURk0bjQy7ukUlDz-rt1RCTanYcrhq1nxUNPwudQuxQ/viewform";
     const params = new URLSearchParams({
-      "entry.1111111111": name,           // Replace with real entry ID for Name
-      "entry.2222222222": phone,          // Replace with real entry ID for Phone
-      "entry.3333333333": address,        // Replace with real entry ID for Address
-      "entry.4444444444": itemsStr,       // Replace with real entry ID for Items
-      "entry.5555555555": total,          // Replace with real entry ID for Total
-      "entry.6666666666": notes || "None" // Replace with real entry ID for Notes
+      "entry.2095484665": name,           // Replace with real entry ID for Name
+      "entry.1933317175": phone,          // Replace with real entry ID for Phone
+      "entry.1856970463": address,        // Replace with real entry ID for Address
+      "entry.606909280": itemsStr,       // Replace with real entry ID for Items
+      "entry.631712929": total,          // Replace with real entry ID for Total
+      "entry.268541836": notes || "None" // Replace with real entry ID for Notes
     });
 
     const formURL = `${GOOGLE_FORM_URL}?${params.toString()}&usp=pp_url`;
