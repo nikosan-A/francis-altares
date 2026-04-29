@@ -36,6 +36,13 @@
       border-radius: 10px;
     }
 
+    .about-img-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+
     /* ============================================================
        CSS VARIABLES & RESET
     ============================================================ */
@@ -616,7 +623,11 @@
       aspect-ratio: 4/5;
       border-radius: var(--radius-lg);
       overflow: hidden;
-      background: linear-gradient(135deg, var(--brown-mid), var(--red-deep));
+      
+      background:
+        linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.15)),
+        url("images/garlic.jpg") center / cover no-repeat;
+
       display: flex; align-items: center; justify-content: center;
       position: relative;
       box-shadow: var(--shadow-lg);
@@ -1686,10 +1697,15 @@
   <div class="container">
     <div class="about-grid">
       <div class="about-visual reveal-left">
+        
         <div class="about-img-main">
+          <img src="images/about.jpg"
+               alt="Rapsarap Homemade Products"
+               onerror="this.remove()">
           <div class="placeholder-icon">🍶</div>
           <div class="img-label">✦ Made Fresh Every Batch</div>
         </div>
+
         <div class="about-badge">
           <strong>100%</strong>
           <span>Home<br>Made</span>
