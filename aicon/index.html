@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Francis Nikko Altares — AI Content Producer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:       #0A0A0F;
+      --ink-mid:   #1C1C2E;
+      --ink-soft:  #2E2E45;
+      --mist:      #F0EFF8;
+      --white:     #FFFFFF;
+      --violet:    #7C5CFC;
+      --violet-dk: #5B3FD6;
+      --violet-lt: #EDE9FF;
+      --cyan:      #00D4FF;
+      --cyan-lt:   #E0FAFF;
+      --gold:      #F5C842;
+      --gold-lt:   #FFF8DC;
+      --text-dim:  rgba(255,255,255,0.55);
+      --text-mid:  rgba(255,255,255,0.78);
+      --radius:    14px;
+      --pill:      100px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--ink);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--ink); }
+    ::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 10px; }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 200;
+      padding: 0 2.5rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,10,15,0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(124,92,252,0.15);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--violet); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: var(--violet);
+      color: var(--white) !important;
+      padding: 7px 18px;
+      border-radius: var(--pill);
+      font-weight: 600 !important;
+      transition: background 0.2s, transform 0.15s !important;
+    }
+
+    .nav-cta:hover { background: var(--violet-dk) !important; transform: scale(1.04); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 8rem 2.5rem 5rem;
+      overflow: hidden;
+    }
+
+    /* gradient orbs */
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(124,92,252,0.22) 0%, transparent 70%);
+      top: -100px;
+      right: -150px;
+      pointer-events: none;
+      animation: pulse 6s ease-in-out infinite;
+    }
+
+    .orb2 {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%);
+      bottom: -80px;
+      left: -100px;
+      pointer-events: none;
+      animation: pulse 8s ease-in-out infinite reverse;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.08); opacity: 0.8; }
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--violet-lt);
+      color: var(--violet);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: var(--pill);
+      margin-bottom: 1.8rem;
+      letter-spacing: 0.4px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--violet);
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -1.5px;
+      margin-bottom: 1.4rem;
+      color: var(--white);
+    }
+
+    .hero-title .line2 {
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.3);
+    }
+
+    .hero-title .accent { color: var(--violet); }
+
+    .hero-sub {
+      font-size: 1.08rem;
+      color: var(--text-mid);
+      max-width: 540px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--violet);
+      color: var(--white);
+      padding: 13px 30px;
+      border-radius: var(--pill);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 0 28px rgba(124,92,252,0.4);
+    }
+
+    .btn-primary:hover {
+      background: var(--violet-dk);
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(124,92,252,0.55);
+    }
+
+    .btn-outline {
+      border: 1.5px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      padding: 12px 28px;
+      border-radius: var(--pill);
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--violet);
+      background: rgba(124,92,252,0.1);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 4rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .stat-num span { color: var(--violet); }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      padding: 6rem 2.5rem;
+      position: relative;
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--violet);
+      margin-bottom: 1rem;
+    }
+
+    .eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 2px;
+      background: var(--violet);
+      border-radius: 2px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.6rem;
+    }
+
+    .section-sub {
+      color: var(--text-dim);
+      font-size: 1rem;
+      max-width: 480px;
+      line-height: 1.65;
+      margin-bottom: 3.5rem;
+    }
+
+    /* ── SERVICES ── */
+    #services { background: var(--ink-mid); }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      padding: 2rem;
+      transition: border-color 0.25s, transform 0.2s, background 0.2s;
+      cursor: default;
+    }
+
+    .service-card:hover {
+      border-color: rgba(124,92,252,0.5);
+      background: rgba(124,92,252,0.07);
+      transform: translateY(-4px);
+    }
+
+    .service-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .icon-violet { background: var(--violet-lt); }
+    .icon-cyan   { background: var(--cyan-lt); }
+    .icon-gold   { background: var(--gold-lt); }
+
+    .service-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+
+    .service-desc {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+
+    .service-tag {
+      display: inline-block;
+      margin-top: 1.2rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: var(--pill);
+      background: rgba(124,92,252,0.15);
+      color: var(--violet);
+      text-transform: uppercase;
+    }
+
+    /* ── CERTIFICATE ── */
+    #certificate {
+      background: var(--ink);
+    }
+
+    .cert-card {
+      background: linear-gradient(135deg, rgba(124,92,252,0.18) 0%, rgba(0,212,255,0.1) 100%);
+      border: 1px solid rgba(124,92,252,0.3);
+      border-radius: 20px;
+      padding: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      max-width: 820px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cert-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237C5CFC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .cert-seal {
+      flex-shrink: 0;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+      box-shadow: 0 0 40px rgba(124,92,252,0.5);
+      position: relative;
+      z-index: 1;
+    }
+
+    .cert-content { position: relative; z-index: 1; }
+
+    .cert-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.5rem;
+    }
+
+    .cert-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.6rem;
+    }
+
+    .cert-desc {
+      color: var(--text-mid);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    /* ── SKILLS ── */
+    #skills { background: var(--ink-mid); }
+
+    .skills-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .skill-item {
+      margin-bottom: 1.6rem;
+    }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .skill-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--white);
+    }
+
+    .skill-pct {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--violet);
+    }
+
+    .skill-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--pill);
+      overflow: hidden;
+    }
+
+    .skill-fill {
+      height: 100%;
+      border-radius: var(--pill);
+      background: linear-gradient(90deg, var(--violet), var(--cyan));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .skill-fill.animated { transform: scaleX(1); }
+
+    .tools-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .tool-tag {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-mid);
+      font-size: 0.83rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: var(--pill);
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .tool-tag:hover {
+      background: rgba(124,92,252,0.15);
+      border-color: rgba(124,92,252,0.4);
+      color: var(--white);
+    }
+
+    /* ── PORTFOLIO ── */
+    #portfolio { background: var(--ink); }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 1.2rem;
+    }
+
+    .portfolio-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+      cursor: pointer;
+      background: var(--ink-soft);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .portfolio-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .portfolio-card.featured {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+
+    .portfolio-visual {
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portfolio-card.featured .portfolio-visual { height: 280px; font-size: 5rem; }
+
+    .pv-1 { background: linear-gradient(135deg, #1a0533 0%, #3d1472 100%); }
+    .pv-2 { background: linear-gradient(135deg, #001a2e 0%, #004d6b 100%); }
+    .pv-3 { background: linear-gradient(135deg, #0d2000 0%, #2a5200 100%); }
+    .pv-4 { background: linear-gradient(135deg, #1a1200 0%, #4a3800 100%); }
+    .pv-5 { background: linear-gradient(135deg, #200010 0%, #5c0030 100%); }
+
+    .pv-glow {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.5;
+    }
+
+    .portfolio-info { padding: 1.2rem 1.4rem; }
+
+    .portfolio-type {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--violet);
+      margin-bottom: 0.35rem;
+    }
+
+    .portfolio-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .portfolio-card.featured .portfolio-name { font-size: 1.15rem; }
+
+    .portfolio-desc {
+      font-size: 0.83rem;
+      color: var(--text-dim);
+      line-height: 1.55;
+    }
+
+    /* ── PROCESS ── */
+    #process { background: var(--ink-mid); }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--violet), var(--cyan), var(--violet), transparent);
+      opacity: 0.3;
+    }
+
+    .process-step {
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .step-num {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--white);
+      margin: 0 auto 1.2rem;
+      box-shadow: 0 0 24px rgba(124,92,252,0.35);
+    }
+
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--ink); }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .contact-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .contact-icon {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: rgba(124,92,252,0.15);
+      border: 1px solid rgba(124,92,252,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .contact-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-bottom: 3px;
+      letter-spacing: 0.3px;
+    }
+
+    .contact-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .form-label { font-size: 0.8rem; font-weight: 600; color: var(--text-mid); }
+
+    .form-input, .form-textarea {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--violet);
+      background: rgba(124,92,252,0.08);
+    }
+
+    .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.25); }
+
+    .form-textarea { min-height: 120px; resize: vertical; }
+
+    .form-btn {
+      background: linear-gradient(135deg, var(--violet), #5B3FD6);
+      color: var(--white);
+      border: none;
+      padding: 14px 28px;
+      border-radius: var(--pill);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(124,92,252,0.35);
+    }
+
+    .form-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 0 45px rgba(124,92,252,0.5);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink-mid);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    .footer-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .footer-name span { color: var(--violet); }
+
+    .footer-sub {
+      font-size: 0.83rem;
+      color: var(--text-dim);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .social-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .social-btn:hover {
+      background: rgba(124,92,252,0.2);
+      border-color: var(--violet);
+      color: var(--white);
+    }
+
+    .footer-copy { font-size: 0.78rem; color: rgba(255,255,255,0.2); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--ink-mid);
+      border: 1px solid rgba(124,92,252,0.4);
+      color: var(--white);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .portfolio-grid { grid-template-columns: 1fr 1fr; }
+      .portfolio-card.featured { grid-column: span 2; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .process-steps::before { display: none; }
+      .skills-layout { grid-template-columns: 1fr; gap: 2rem; }
+      .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .cert-card { flex-direction: column; text-align: center; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 1.2rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.2rem; }
+      .hero { padding: 7rem 1.2rem 4rem; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .portfolio-card.featured { grid-column: span 1; }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">FN<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#certificate">Certificate</a></li>
+      <li><a href="#contact" class="nav-cta">Hire Me</a></li>
+      <li><a href="#videos">Videos</a></li>
+      <li><a href="#photos">Photos</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="orb2"></div>
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Available for Projects
+      </div>
+      <h1 class="hero-title">
+        Francis Nikko<br>
+        <span class="line2">Altares</span>
+      </h1>
+      <p style="font-family:'Syne',sans-serif; font-size:clamp(1.1rem,2.5vw,1.5rem); font-weight:600; color:var(--violet); margin-bottom:1rem; letter-spacing:-0.3px;">AI Content Producer</p>
+      <p class="hero-sub">I craft compelling content at the intersection of artificial intelligence and creativity — turning prompts into visuals, stories, and videos that move people and grow brands.</p>
+      <div class="hero-actions">
+        <a href="#portfolio" class="btn-primary">View My Work</a>
+        <a href="#contact" class="btn-outline">Let's Collaborate</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">5<span>+</span></div>
+          <div class="stat-label">AI Specializations</div>
+        </div>
+        <div>
+          <div class="stat-num">1<span>×</span></div>
+          <div class="stat-label">ChatGPT Certified</div>
+        </div>
+        <div>
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Creative Output</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-inner">
+      <div class="eyebrow">What I Do</div>
+      <h2 class="section-title">AI-Powered Services</h2>
+      <p class="section-sub">End-to-end content production powered by the latest AI tools — from a single prompt to a polished deliverable.</p>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon icon-violet">✍️</div>
+          <div class="service-name">Text-to-Photo Generation</div>
+          <div class="service-desc">Transform written prompts into stunning, publication-ready visuals. From product concepts to brand imagery, every image is intentional and on-brief.</div>
+          <span class="service-tag">AI Image Gen</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-cyan">🎬</div>
+          <div class="service-name">Text-to-Video Production</div>
+          <div class="service-desc">Script-to-screen video content using cutting-edge AI video tools. Perfect for social media reels, brand films, and explainer content.</div>
+          <span class="service-tag">AI Video</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-gold">🖼️</div>
+          <div class="service-name">AI Photo Editing</div>
+          <div class="service-desc">Elevate existing photos with AI-powered retouching, background replacement, style transfers, and compositing that looks professionally crafted.</div>
+          <span class="service-tag">AI Editing</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-violet">🎥</div>
+          <div class="service-name">Photo-to-Video Animation</div>
+          <div class="service-desc">Breathe life into static photos — subtle animations, cinematic camera moves, and AI-driven motion that transforms stills into engaging video content.</div>
+          <span class="service-tag">Photo → Video</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-cyan">🤖</div>
+          <div class="service-name">ChatGPT Content Strategy</div>
+          <div class="service-desc">Leveraging master-level ChatGPT expertise to craft long-form copy, social calendars, brand voice guides, and automated content pipelines.</div>
+          <span class="service-tag">Certified</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-gold">📱</div>
+          <div class="service-name">Social Media AI Content</div>
+          <div class="service-desc">Full-package social content creation — AI-generated visuals paired with strategically written captions optimized for reach and engagement.</div>
+          <span class="service-tag">Social</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATE -->
+  <section id="certificate">
+    <div class="section-inner">
+      <div class="eyebrow">Credentials</div>
+      <h2 class="section-title">Certification</h2>
+      <p class="section-sub">Formal recognition of deep expertise in AI prompt engineering and content strategy.</p>
+      <div class="cert-card">
+        <div class="cert-seal">🏅</div>
+        <div class="cert-content">
+          <div class="cert-label">Verified Certificate</div>
+          <div class="cert-title">Master in ChatGPT</div>
+          <div class="cert-desc">Advanced certification covering prompt engineering, AI content pipelines, ChatGPT API integration, and real-world production workflows — demonstrating expert-level proficiency in leveraging ChatGPT for professional content creation.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-inner">
+      <div class="eyebrow">Expertise</div>
+      <h2 class="section-title">Skills & Tools</h2>
+      <p class="section-sub">A toolkit built for the new era of AI-assisted content production.</p>
+      <div class="skills-layout">
+        <div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <span class="skill-name">AI Prompt Engineering</span>
+              <span class="skill-pct">97%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="--w:0.97"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <span class="skill-name">Text-to-Image Generation</span>
+              <span class="skill-pct">94%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="--w:0.94"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <span class="skill-name">AI Video Production</span>
+              <span class="skill-pct">90%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="--w:0.90"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <span class="skill-name">AI Photo Editing</span>
+              <span class="skill-pct">92%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="--w:0.92"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <span class="skill-name">Content Strategy</span>
+              <span class="skill-pct">88%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="--w:0.88"></div></div>
+          </div>
+        </div>
+        <div>
+          <p class="skill-name" style="margin-bottom:1.2rem; color:var(--text-dim); font-size:0.8rem; letter-spacing:1.5px; text-transform:uppercase; font-weight:600;">AI Tools I Work With</p>
+          <div class="tools-grid">
+            <span class="tool-tag">ChatGPT</span>
+            <span class="tool-tag">Midjourney</span>
+            <span class="tool-tag">DALL·E 3</span>
+            <span class="tool-tag">Stable Diffusion</span>
+            <span class="tool-tag">Runway ML</span>
+            <span class="tool-tag">Pika Labs</span>
+            <span class="tool-tag">Kling AI</span>
+            <span class="tool-tag">Adobe Firefly</span>
+            <span class="tool-tag">CapCut AI</span>
+            <span class="tool-tag">ElevenLabs</span>
+            <span class="tool-tag">HeyGen</span>
+            <span class="tool-tag">Canva AI</span>
+            <span class="tool-tag">Sora</span>
+            <span class="tool-tag">Leonardo AI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <div class="section-inner">
+      <div class="eyebrow">Selected Work</div>
+      <h2 class="section-title">Portfolio</h2>
+      <p class="section-sub">A snapshot of AI content projects across formats and industries.</p>
+      <div class="portfolio-grid">
+
+        <div class="portfolio-card featured">
+          <div class="portfolio-visual pv-1">
+            <div class="pv-glow" style="background:var(--violet); top:20%; left:20%;"></div>
+            <span style="position:relative;z-index:1;">🎨</span>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-type">Text → Image Campaign</div>
+            <div class="portfolio-name">Brand Visual Identity — AI-Generated Series</div>
+            <div class="portfolio-desc">A full 12-piece visual identity for a lifestyle brand, created entirely through AI prompting. Consistent style, palette, and mood across every asset.</div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-visual pv-2">
+            <div class="pv-glow" style="background:var(--cyan); top:30%; left:30%;"></div>
+            <span style="position:relative;z-index:1;">🎬</span>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-type">Text → Video</div>
+            <div class="portfolio-name">30-Second Social Ad</div>
+            <div class="portfolio-desc">Prompt-to-video short-form ad optimized for Instagram Reels.</div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-visual pv-3">
+            <div class="pv-glow" style="background:#6BCB77; top:30%; left:30%;"></div>
+            <span style="position:relative;z-index:1;">🖼️</span>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-type">AI Photo Edit</div>
+            <div class="portfolio-name">Product Photo Enhancement</div>
+            <div class="portfolio-desc">Background swap, lighting correction, and style transfer using AI tools.</div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-visual pv-4">
+            <div class="pv-glow" style="background:var(--gold); top:30%; left:30%;"></div>
+            <span style="position:relative;z-index:1;">📸</span>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-type">Photo → Video</div>
+            <div class="portfolio-name">Animated Portrait Series</div>
+            <div class="portfolio-desc">Static portrait photographs animated with cinematic motion and mood.</div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-visual pv-5">
+            <div class="pv-glow" style="background:#FF6B9D; top:30%; left:30%;"></div>
+            <span style="position:relative;z-index:1;">📝</span>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-type">ChatGPT Strategy</div>
+            <div class="portfolio-name">30-Day Content Calendar</div>
+            <div class="portfolio-desc">Full social media calendar with captions, hashtags, and post formats.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="section-inner">
+      <div class="eyebrow">How I Work</div>
+      <h2 class="section-title">My Creative Process</h2>
+      <p class="section-sub" style="margin-bottom:4rem;">Every project follows the same disciplined approach — brief to brilliant, efficiently.</p>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="step-num">1</div>
+          <div class="step-title">Discovery</div>
+          <div class="step-desc">Deep-dive into your brand, goals, and audience to establish the creative direction before any tool is opened.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">2</div>
+          <div class="step-title">Prompt Craft</div>
+          <div class="step-desc">Engineer precise, iterative prompts that reliably produce on-brand output — the craft behind the curtain.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">3</div>
+          <div class="step-title">Production</div>
+          <div class="step-desc">Generate, curate, and refine using the best AI tools for the job — images, video, copy, or all three.</div>
+        </div>
+        <div class="process-step">
+          <div class="step-num">4</div>
+          <div class="step-title">Delivery</div>
+          <div class="step-desc">Export in the exact formats and specs you need, ready to publish, print, or hand to the next creative in the chain.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- ── VIDEO SAMPLES ── -->
+<section id="videos">
+  <div class="section-inner">
+    <div class="eyebrow">Video Work</div>
+    <h2 class="section-title">Sample Videos</h2>
+    <p class="section-sub">A selection of AI-powered videos created from scratch — from prompt to final render.</p>
+
+    <div class="services-grid">
+
+      <div class="service-card">
+  <div class="service-name">AI Video Sample</div>
+  <div class="service-desc">AI-generated video created from prompt to final output.</div>
+
+  <a href="https://www.youtube.com/watch?v=FHCnaeGdp1k" target="_blank">
+    <div style="position:relative; margin-top:1rem; border-radius:12px; overflow:hidden;">
+      
+      <img 
+        src="https://img.youtube.com/vi/FHCnaeGdp1k/hqdefault.jpg" 
+        alt="Video Thumbnail"
+        style="width:100%; display:block;"
+      />
+
+      <!-- Play Button Overlay -->
+      <div style="
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:rgba(0,0,0,0.6);
+        border-radius:50%;
+        width:70px;
+        height:70px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:28px;
+        color:white;
+      ">
+        ▶
+      </div>
+
+    </div>
+  </a>
+</div>
+
+
+        <div class="service-card">
+  <div class="service-name">AI-Commercial Chili Garlic</div>
+  <div class="service-desc">A bold, flavor-packed AI-generated ad concept highlighting the spice and sizzle of chili garlic.</div>
+
+  <a href="https://www.youtube.com/shorts/kGONymsykxI" target="_blank">
+    <div style="position:relative; margin-top:1rem; border-radius:12px; overflow:hidden;">
+      
+      <img 
+        src="https://img.youtube.com/vi/kGONymsykxI/hqdefault.jpg" 
+        style="width:100%; display:block; transition:transform 0.3s;"
+      >
+
+      <!-- Play Button -->
+      <div style="
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:rgba(0,0,0,0.6);
+        border-radius:50%;
+        width:65px;
+        height:65px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:26px;
+        color:white;
+      ">
+        ▶
+      </div>
+
+    </div>
+  </a>
+</div>
+
+      <div class="service-card">
+  <div class="service-name">AI Motion Showcase</div>
+  <div class="service-desc">AI-generated short video demonstrating motion and visual storytelling.</div>
+
+  <a href="https://www.youtube.com/shorts/sQ-a0PwB4Q4" target="_blank">
+    <div style="position:relative; margin-top:1rem; border-radius:12px; overflow:hidden;">
+      
+      <img 
+        src="https://img.youtube.com/vi/sQ-a0PwB4Q4/hqdefault.jpg"
+        style="width:100%; display:block; transition: transform 0.3s;"
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'"
+      >
+
+      <!-- Play Button -->
+      <div style="
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        background:rgba(0,0,0,0.6);
+        border-radius:50%;
+        width:65px;
+        height:65px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:26px;
+        color:white;
+      ">
+        ▶
+      </div>
+
+    </div>
+  </a>
+</div>
+</section>
+
+<!-- ── PHOTO SAMPLES ── -->
+<section id="photos" style="background: var(--ink-mid);">
+  <div class="section-inner">
+    <div class="eyebrow">Visual Work</div>
+    <h2 class="section-title">Sample Photos</h2>
+    <p class="section-sub">AI-generated images, edits, and visual concepts across styles and industries.</p>
+
+    <div class="portfolio-grid">
+
+      <div class="portfolio-card">
+        <div class="portfolio-visual">
+
+<a href="photo/photo1.png" target="_blank">
+  <img src="photo/photo1.png" style="width:100%; height:100%; object-fit:cover;">
+</a>
+                 </div>
+        <div class="portfolio-info">
+          <div class="portfolio-type">AI Generated</div>
+          <div class="portfolio-name">Brand Concept Visual</div>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-visual">
+         <a href="photo/photo2.png" target="_blank">
+  <img src="photo/photo2.png" style="width:100%; height:100%; object-fit:cover;">
+</a>
+        </div>
+        <div class="portfolio-info">
+          <div class="portfolio-type">Photo Editing</div>
+          <div class="portfolio-name">Product Enhancement</div>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-visual">
+          <a href="photo/photo3.png" target="_blank">
+  <img src="photo/photo3.png" style="width:100%; height:100%; object-fit:cover;">
+</a>
+        </div>
+        <div class="portfolio-info">
+          <div class="portfolio-type">AI Art</div>
+          <div class="portfolio-name">Creative Portrait</div>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-visual">
+            <a href="photo/photo4.png" target="_blank">
+  <img src="photo/photo4.png" style="width:100%; height:100%; object-fit:cover;">
+</a>
+        </div>
+        <div class="portfolio-info">
+          <div class="portfolio-type">Style Transfer</div>
+          <div class="portfolio-name">Artistic Transformation</div>
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-visual">
+             <a href="photo/photo5.png" target="_blank">
+  <img src="photo/photo5.png" style="width:100%; height:100%; object-fit:cover;">
+</a>
+        </div>
+        <div class="portfolio-info">
+          <div class="portfolio-type">Concept Art</div>
+          <div class="portfolio-name">Visual Direction Study</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-inner">
+      <div class="eyebrow">Get In Touch</div>
+      <h2 class="section-title">Let's Work Together</h2>
+      <p class="section-sub" style="margin-bottom:3rem;">Have a project in mind? Send a message and I'll get back to you within 24 hours.</p>
+      <div class="contact-layout">
+        <div>
+          <div class="contact-info-item">
+            <div class="contact-icon">📧</div>
+            <div>
+              <div class="contact-label">Email</div>
+              <div class="contact-value">francis.nikko.28@gmail.com</div>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <div class="contact-label">Based in</div>
+              <div class="contact-value">Philippines</div>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-icon">⚡</div>
+            <div>
+              <div class="contact-label">Availability</div>
+              <div class="contact-value">Open to Freelance & Full-Time</div>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-icon">🏅</div>
+            <div>
+              <div class="contact-label">Certification</div>
+              <div class="contact-value">Master in ChatGPT — Certified</div>
+            </div>
+          </div>
+        </div>
+        
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-name">Francis Nikko <span>Altares</span></div>
+    <div class="footer-sub">AI Content Producer · ChatGPT Certified Master</div>
+    <div class="footer-socials">
+      
+    </div>
+    <div class="footer-copy">© 2026 Francis Nikko Altares. All rights reserved.</div>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── SKILL BAR ANIMATION ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.skill-fill').forEach(bar => {
+            const w = getComputedStyle(bar).getPropertyValue('--w') || '0.8';
+            bar.style.transform = `scaleX(${w})`;
+            bar.classList.add('animated');
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    const skillsSection = document.querySelector('#skills .skills-layout');
+    if (skillsSection) observer.observe(skillsSection);
+
+    // ── TOAST ──
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ── CONTACT ──
+    function sendMessage() {
+      const name  = document.getElementById('cName').value.trim();
+      const email = document.getElementById('cEmail').value.trim();
+      const msg   = document.getElementById('cMsg').value.trim();
+      if (!name || !email || !msg) {
+        showToast('⚠️ Please fill in all required fields.');
+        return;
+      }
+      if (!email.includes('@')) {
+        showToast('⚠️ Please enter a valid email address.');
+        return;
+      }
+      showToast('✅ Message sent! I\'ll get back to you within 24 hours.');
+      ['cName','cEmail','cType','cMsg'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    // ── SCROLL FADE IN ──
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.service-card, .portfolio-card, .process-step, .cert-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      fadeObserver.observe(el);
+    });
+  </script>
+</body>
+</html>
